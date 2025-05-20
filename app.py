@@ -1,7 +1,6 @@
 import streamlit as st
-from kafka.consumer import consume_latest_processed_data
-from kafka.producer import send_trigger
-
+from consumer import consume_latest_processed_data
+from producer import send_trigger
 BROKER = "172.21.229.182"
 PROCESSED_TOPIC = "processed_team_stats"
 
