@@ -36,3 +36,4 @@ def consume_latest_processed_data(broker, topic, min_messages=1, idle_timeout=30
         consumer.close()
 
     return messages
+
