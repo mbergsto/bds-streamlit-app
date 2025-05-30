@@ -39,7 +39,7 @@ A Streamlit web application for triggering and visualizing processed KBO game da
    # Remote DB configuration
    DB_REMOTE_USER=bigdata
    DB_REMOTE_PASSWORD=bigdata+
-   DB_REMOTE_HOST=192.168.1.102
+   DB_REMOTE_HOST=192.168.1.132
    DB_REMOTE_PORT=3306
    DB_REMOTE_NAME=scraping_db
 
