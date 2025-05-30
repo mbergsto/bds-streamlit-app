@@ -5,8 +5,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DB_CONNECTION = os.getenv("DB_CONNECTION")
+DB_CONNECTION = os.getenv("DB_CONNECTION", "").strip()
 is_local = DB_CONNECTION == "local"
+
+print("is local:", is_local)
+print("DB_CONNECTION:", DB_CONNECTION)
 
 db_config = {
     "user": os.getenv("DB_LOCAL_USER") if is_local else os.getenv("DB_REMOTE_USER"),
