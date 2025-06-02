@@ -1,4 +1,4 @@
-def mock_consume_latest_processed_data(*args, **kwargs):
+def mock_consume_latest_processed_data1(*args, **kwargs):
     return [
         {
             "team_name": "Hanwha Eagles",
@@ -6,7 +6,8 @@ def mock_consume_latest_processed_data(*args, **kwargs):
                 "wins": 10,
                 "losses": 5,
                 "draws": 1,
-                "score_difference": 25
+                "score_difference": 25,
+                "avg_form_score": 7.8
             },
             "batters": [
                 {
@@ -41,7 +42,8 @@ def mock_consume_latest_processed_data(*args, **kwargs):
                 "wins": 8,
                 "losses": 6,
                 "draws": 2,
-                "score_difference": 15
+                "score_difference": 15,
+                "avg_form_score": 7.5
             },
             "batters": [
                 {
@@ -65,3 +67,30 @@ def mock_consume_latest_processed_data(*args, **kwargs):
         }
     ]
 
+def sort_by_avg_form_score(data):
+    """
+    Sorts the data by average form score in descending order.
+    """
+    return sorted(data, key=lambda x: x['team_stats']['avg_form_score'], reverse=False)
+
+def sort_teams_players_by_form_score(data):
+    """
+    Sorts each team's players by their form score in descending order.
+    """
+    for team in data:
+        team['batters'] = sorted(team['batters'], key=lambda x: x['form_score'], reverse=True)
+        team['pitchers'] = sorted(team['pitchers'], key=lambda x: x['form_score'], reverse=True)
+    return data
+
+def mock_consume_latest_processed_data(*args, **kwargs):
+    """
+    Mock function to simulate consuming processed data from Kafka.
+    Returns a fixed set of team data.
+    """
+    data = mock_consume_latest_processed_data1(*args, **kwargs)
+    
+    # Sort the data by average form score
+    sorted_data = sort_by_avg_form_score(data)
+    sorted_data = sort_teams_players_by_form_score(sorted_data)
+    
+    return sorted_data
