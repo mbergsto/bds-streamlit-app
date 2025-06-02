@@ -1,7 +1,7 @@
 import streamlit as st
-# from mock_consumer import mock_consume_latest_processed_data
-from consumer import consume_latest_processed_data
-from db_utils import fetch_latest_processed_team_stats
+from mock_consumer import mock_consume_latest_processed_data
+#from consumer import consume_latest_processed_data
+#from db_utils import fetch_latest_processed_team_stats
 from producer import send_trigger
 import pandas as pd
 import os
@@ -64,8 +64,9 @@ st.sidebar.header("Controls")
 @st.cache_data
 def load_data():
     logging.info("Loading data from database via fetch_latest_processed_team_stats...")
-    data = fetch_latest_processed_team_stats()
-    logging.info(f"Fetched {len(data) if data else 0} records from database.")
+    #data = fetch_latest_processed_team_stats()
+    data = mock_consume_latest_processed_data()
+    #logging.info(f"Fetched {len(data) if data else 0} records from database.")
     return data
 
 data = load_data()
@@ -73,11 +74,11 @@ data = load_data()
 if st.sidebar.button("🔄 Update Stats via Scraper"): 
     send_trigger(BROKER, KAFKA_TOPIC_OUT)
     with st.spinner("Trigger sent. Waiting for processed data from Kafka..."):
-        data = consume_latest_processed_data(
-            broker=BROKER,
-            topic=KAFKA_TOPIC_IN,
-        ) 
-        #data = mock_consume_latest_processed_data()
+         """ data = consume_latest_processed_data(
+             broker=BROKER,
+             topic=KAFKA_TOPIC_IN,
+         )  """
+    data = mock_consume_latest_processed_data()
 
     if data: 
         st.success(f"✅ Received {len(data)} team records from Kafka!")
@@ -129,7 +130,7 @@ if st.sidebar.button("🔄 Update Stats via Scraper"):
                 ])
 
                 # Team Form: Precomputed form score
-                tab_form.metric("Avg Form Score", team['team_form_score'])
+                tab_form.metric("Average Form Score", team['team_form_score'])
 
                 # Batters Table
                 batters_df = pd.DataFrame(team['batters'])
@@ -140,17 +141,11 @@ if st.sidebar.button("🔄 Update Stats via Scraper"):
                     batters_df.index.name = "Player Name"
                     
                     # Change column names to user-friendly ones
-                    batters_df.rename(columns={
-                        "position": "Position",
-                        "at_bats": "At Bats",
-                        "runs": "Runs",
-                        "hits": "Hits",
-                        "home_runs": "Home Runs",
-                        "runs_batted_in": "RBI",
-                        "walks": "Walks",
-                        "strikeouts": "Strikeouts"
-                    }, inplace=True)
-                    
+                    batters_df = batters_df.rename(columns={
+                    "batting_average": "Batting Average",
+                    "on_base_percentage": "On Base Percentage",
+                    "form_score": "Form Score"
+                    })
                     tab_batters.table(batters_df)
                 else:
                     tab_batters.info("No batter data available.")
@@ -164,16 +159,13 @@ if st.sidebar.button("🔄 Update Stats via Scraper"):
                     pitchers_df.index.name = "Player Name"
                     
                     # Change column names to user-friendly ones
-                    pitchers_df.rename(columns={
-                        "innings_pitched": "Innings Pitched",
-                        "pitch_count": "Pitch Count",
-                        "runs_allowed": "Runs Allowed",
-                        "earned_runs_allowed": "Earned Runs",
-                        "hits_allowed": "Hits Allowed",
-                        "home_runs_allowed": "HR Allowed",
-                        "strikeouts": "Strikeouts",
-                        "walks": "Walks"
-                    }, inplace=True) 
+                    pitchers_df = pitchers_df.rename(columns={
+                    "era": "ERA",
+                    "whip": "WHIP",
+                    "k_per_9": "K Per 9",
+                    "bb_per_9": "BB per 9",
+                    "form_score": "Form Score"
+                    })
                     
                     
                     tab_pitchers.table(pitchers_df)
@@ -225,7 +217,7 @@ else:
                     "Batters", 
                     "Pitchers"
                 ])
-                tab_form.metric("Avg Form Score", team['team_form_score'])
+                tab_form.metric("Average Form Score", team['team_form_score'])
                 batters_df = pd.DataFrame(team['batters'])
                 if not batters_df.empty:
                     batters_df.set_index('player_name', inplace=True)
@@ -234,16 +226,11 @@ else:
                     batters_df.index.name = "Player Name"
                     
                     # Change column names to user-friendly ones
-                    batters_df.rename(columns={
-                        "position": "Position",
-                        "at_bats": "At Bats",
-                        "runs": "Runs",
-                        "hits": "Hits",
-                        "home_runs": "Home Runs",
-                        "runs_batted_in": "RBI",
-                        "walks": "Walks",
-                        "strikeouts": "Strikeouts"
-                    }, inplace=True)
+                    batters_df = batters_df.rename(columns={
+                    "batting_average": "Batting Average",
+                    "on_base_percentage": "On Base Percentage",
+                    "form_score": "Form Score"
+                    })
                     
                     tab_batters.table(batters_df)
                 else:
@@ -257,16 +244,13 @@ else:
                     pitchers_df.index.name = "Player Name"
                     
                     # Change column names to user-friendly ones
-                    pitchers_df.rename(columns={
-                        "innings_pitched": "Innings Pitched",
-                        "pitch_count": "Pitch Count",
-                        "runs_allowed": "Runs Allowed",
-                        "earned_runs_allowed": "Earned Runs",
-                        "hits_allowed": "Hits Allowed",
-                        "home_runs_allowed": "HR Allowed",
-                        "strikeouts": "Strikeouts",
-                        "walks": "Walks"
-                    }, inplace=True) 
+                    pitchers_df = pitchers_df.rename(columns={
+                    "era": "ERA",
+                    "whip": "WHIP",
+                    "k_per_9": "K Per 9",
+                    "bb_per_9": "BB per 9",
+                    "form_score": "Form Score"
+                    })
                     
                     tab_pitchers.table(pitchers_df)
                 else:
