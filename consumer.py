@@ -1,6 +1,8 @@
 import json
 from confluent_kafka import Consumer
 import uuid
+from db_utils import fetch_latest_processed_team_stats
+from sort_utils import sort_by_avg_form_score, sort_teams_by_form_score
 
 def consume_latest_processed_data(broker, topic, expected_messages=10):
     # Kafka consumer configuration
@@ -26,5 +28,13 @@ def consume_latest_processed_data(broker, topic, expected_messages=10):
             messages.append(data)
     finally:
         consumer.close()  # Always close the consumer
+    
+    sorted_messages = sort_by_avg_form_score(sort_teams_by_form_score(messages))  # Sort messages by form score
+    return sorted_messages if sorted_messages else []  # Return the list of messages
 
-    return messages  # Return the list of messages
+def start_data():
+    data = fetch_latest_processed_team_stats()
+    sorted_data = sort_by_avg_form_score(sort_teams_by_form_score(data))
+    return sorted_data if sorted_data else []
+
+
