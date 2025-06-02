@@ -1,7 +1,9 @@
 import streamlit as st
 # from mock_consumer import mock_consume_latest_processed_data
-from consumer import consume_latest_processed_data
-from db_utils import fetch_latest_processed_team_stats
+#from consumer import consume_latest_processed_data
+#from db_utils import fetch_latest_processed_team_stats
+from mock_consumer import mock_consume_latest_processed_data
+
 from producer import send_trigger
 import pandas as pd
 import os
@@ -50,8 +52,9 @@ st.sidebar.header("Controls")
 @st.cache_data
 def load_data():
     logging.info("Loading data from database via fetch_latest_processed_team_stats...")
-    data = fetch_latest_processed_team_stats()
-    logging.info(f"Fetched {len(data) if data else 0} records from database.")
+    #data = fetch_latest_processed_team_stats()
+    data = mock_consume_latest_processed_data()
+    #logging.info(f"Fetched {len(data) if data else 0} records from database.")
     return data
 
 data = load_data()
@@ -59,11 +62,11 @@ data = load_data()
 if st.sidebar.button("🔄 Update Stats via Scraper"): 
     send_trigger(BROKER, KAFKA_TOPIC_OUT)
     with st.spinner("Trigger sent. Waiting for processed data from Kafka..."):
-        data = consume_latest_processed_data(
+        """ data = consume_latest_processed_data(
             broker=BROKER,
             topic=KAFKA_TOPIC_IN,
-        ) 
-        #data = mock_consume_latest_processed_data()
+        )  """
+        data = mock_consume_latest_processed_data()
 
     if data: 
         st.success(f"✅ Received {len(data)} team records from Kafka!")

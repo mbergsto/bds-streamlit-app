@@ -2,6 +2,7 @@ def mock_consume_latest_processed_data(*args, **kwargs):
     return [
         {
             "team_name": "Hanwha Eagles",
+            "team_form_score": 54,
             "team_stats": {
                 "wins": 10,
                 "losses": 5,
@@ -37,6 +38,7 @@ def mock_consume_latest_processed_data(*args, **kwargs):
         },
         {
             "team_name": "LG Twins",
+            "team_form_score": 43,
             "team_stats": {
                 "wins": 8,
                 "losses": 6,
