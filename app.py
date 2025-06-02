@@ -11,8 +11,37 @@ import logging
 # Load environment variables
 load_dotenv()
 
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
+
+# Team logos
+team_logos = {
+    "Hanwha Eagles":   "logos/hanwha.png",
+    "LG Twins":        "logos/lg.png",
+    "Samsung Lions":   "logos/samsung.png",
+    "Doosan Bears":    "logos/doosan.png",
+    "Lotte Giants":    "logos/lotte.png",
+    "NC Dinos":        "logos/nc.png",
+    "KT Wiz":          "logos/kt.png",
+    "Kiwoom Heroes":   "logos/kiwoom.png",
+    "SSG Landers":     "logos/ssg.png",
+    "KIA Tigers":      "logos/kia.png",
+}
+
+# Team font colors 
+team_colors = {
+    "Hanwha Eagles": "#F08200",   # Pumpkin orange :contentReference[oaicite:0]{index=0}
+    "LG Twins":       "#C40452",   # Maroon :contentReference[oaicite:1]{index=1}
+    "Samsung Lions":  "#1428A0",   # Samsung blue :contentReference[oaicite:2]{index=2}
+    "Doosan Bears":   "#000080",   # Navy blue :contentReference[oaicite:3]{index=3}
+    "Lotte Giants":   "#FF7F00",   # Orange :contentReference[oaicite:4]{index=4}
+    "NC Dinos":       "#405A3D",   # Dino green :contentReference[oaicite:5]{index=5}
+    "KT Wiz":         "#E60013",   # KT red :contentReference[oaicite:6]{index=6}
+    "Kiwoom Heroes":  "#800020",   # Burgundy :contentReference[oaicite:7]{index=7}
+    "SSG Landers":    "#E60013",   # SSG charismatic red :contentReference[oaicite:8]{index=8}
+    "KIA Tigers":     "#FF0000",   # Red (Wikipedia: “Colors: Red, white, black”) :contentReference[oaicite:9]{index=9}
+}
 
 # Page configuration
 st.set_page_config(
@@ -60,11 +89,30 @@ if st.sidebar.button("🔄 Update Stats via Scraper"):
         )
 
         # Display each selected team's dashboard
-        for team in data:
+        for team in sorted(data, key=lambda x: x["team_name"]):
             if team["team_name"] not in selected: 
                 continue
 
-            with st.expander(f"{team['team_name']} Dashboard", expanded=True):
+            # Highlight team names
+            color = team_colors.get(team["team_name"], "#000000")
+            with st.expander(f"{team['team_name']}", expanded=True) : 
+                
+                # team image
+                img_col, text_col = st.columns([1, 9], gap="small")
+
+                logo_path = team_logos.get(team["team_name"], None)
+                if logo_path and os.path.exists(logo_path):
+                    img_col.image(logo_path, width=50)
+                else:
+                    img_col.write("")
+                
+                
+                st.markdown(
+                    f"<h2 style='color:{color}; font-weight:bold'>{team['team_name']}</h2>",
+                    unsafe_allow_html=True
+                )
+                
+                
                 # Team Stats Metrics
                 stats = team['team_stats']
                 col1, col2, col3, col4 = st.columns(4)
@@ -87,6 +135,22 @@ if st.sidebar.button("🔄 Update Stats via Scraper"):
                 batters_df = pd.DataFrame(team['batters'])
                 if not batters_df.empty:
                     batters_df.set_index('player_name', inplace=True)
+                    
+                    # Change the index name to a user-friendly one
+                    batters_df.index.name = "Player Name"
+                    
+                    # Change column names to user-friendly ones
+                    batters_df.rename(columns={
+                        "position": "Position",
+                        "at_bats": "At Bats",
+                        "runs": "Runs",
+                        "hits": "Hits",
+                        "home_runs": "Home Runs",
+                        "runs_batted_in": "RBI",
+                        "walks": "Walks",
+                        "strikeouts": "Strikeouts"
+                    }, inplace=True)
+                    
                     tab_batters.table(batters_df)
                 else:
                     tab_batters.info("No batter data available.")
@@ -95,6 +159,23 @@ if st.sidebar.button("🔄 Update Stats via Scraper"):
                 pitchers_df = pd.DataFrame(team['pitchers'])
                 if not pitchers_df.empty:
                     pitchers_df.set_index('player_name', inplace=True)
+                    
+                    # Change the index name to a user-friendly one
+                    pitchers_df.index.name = "Player Name"
+                    
+                    # Change column names to user-friendly ones
+                    pitchers_df.rename(columns={
+                        "innings_pitched": "Innings Pitched",
+                        "pitch_count": "Pitch Count",
+                        "runs_allowed": "Runs Allowed",
+                        "earned_runs_allowed": "Earned Runs",
+                        "hits_allowed": "Hits Allowed",
+                        "home_runs_allowed": "HR Allowed",
+                        "strikeouts": "Strikeouts",
+                        "walks": "Walks"
+                    }, inplace=True) 
+                    
+                    
                     tab_pitchers.table(pitchers_df)
                 else:
                     tab_pitchers.info("No pitcher data available.")
@@ -109,11 +190,29 @@ else:
             "Filter Teams:", team_names, default=team_names
         )
 
-        for team in data:
+        for team in sorted(data, key=lambda x: x["team_name"]):
             if team["team_name"] not in selected: 
                 continue
 
-            with st.expander(f"{team['team_name']} Dashboard", expanded=True):
+            # Highlight team names
+            color = team_colors.get(team["team_name"], "#000000")
+            with st.expander(f"{team['team_name']}", expanded=True) : 
+                
+                # team image
+                img_col, text_col = st.columns([1, 9], gap="small")
+                logo_path = team_logos.get(team["team_name"], None)
+                if logo_path and os.path.exists(logo_path):
+                    img_col.image(logo_path, width=50)
+                else:
+                    img_col.write("")
+                
+                
+                st.markdown(
+                    f"<h2 style='color:{color}; font-weight:bold'>{team['team_name']}</h2>",
+                    unsafe_allow_html=True
+                ) 
+                
+                
                 stats = team['team_stats']
                 col1, col2, col3, col4 = st.columns(4)
                 col1.metric("Wins", stats['wins'])
@@ -130,6 +229,22 @@ else:
                 batters_df = pd.DataFrame(team['batters'])
                 if not batters_df.empty:
                     batters_df.set_index('player_name', inplace=True)
+                    
+                    # Change the index name to a user-friendly one
+                    batters_df.index.name = "Player Name"
+                    
+                    # Change column names to user-friendly ones
+                    batters_df.rename(columns={
+                        "position": "Position",
+                        "at_bats": "At Bats",
+                        "runs": "Runs",
+                        "hits": "Hits",
+                        "home_runs": "Home Runs",
+                        "runs_batted_in": "RBI",
+                        "walks": "Walks",
+                        "strikeouts": "Strikeouts"
+                    }, inplace=True)
+                    
                     tab_batters.table(batters_df)
                 else:
                     tab_batters.info("No batter data available.")
@@ -137,6 +252,22 @@ else:
                 pitchers_df = pd.DataFrame(team['pitchers'])
                 if not pitchers_df.empty:
                     pitchers_df.set_index('player_name', inplace=True)
+                    
+                    # Change the index name to a user-friendly one
+                    pitchers_df.index.name = "Player Name"
+                    
+                    # Change column names to user-friendly ones
+                    pitchers_df.rename(columns={
+                        "innings_pitched": "Innings Pitched",
+                        "pitch_count": "Pitch Count",
+                        "runs_allowed": "Runs Allowed",
+                        "earned_runs_allowed": "Earned Runs",
+                        "hits_allowed": "Hits Allowed",
+                        "home_runs_allowed": "HR Allowed",
+                        "strikeouts": "Strikeouts",
+                        "walks": "Walks"
+                    }, inplace=True) 
+                    
                     tab_pitchers.table(pitchers_df)
                 else:
                     tab_pitchers.info("No pitcher data available.")
