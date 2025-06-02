@@ -25,7 +25,7 @@ db_config = {
 def fetch_latest_processed_team_stats():
     try:
         conn = mariadb.connect(**db_config)
-        cursor = conn.cursor()
+        cursor = conn.cursor() 
 
         cursor.execute("SELECT team_name, snapshot FROM processed_team_stats")
         rows = cursor.fetchall()
