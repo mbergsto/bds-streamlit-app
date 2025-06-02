@@ -29,12 +29,14 @@ def consume_latest_processed_data(broker, topic, expected_messages=10):
     finally:
         consumer.close()  # Always close the consumer
     
-    sorted_messages = sort_by_avg_form_score(sort_teams_by_form_score(messages))  # Sort messages by form score
+    teams_sorted_by_form_score = sort_teams_by_form_score(messages)  # Sort teams by form score
+    sorted_messages = sort_by_avg_form_score(teams_sorted_by_form_score)  # Sort by average form score
     return sorted_messages if sorted_messages else []  # Return the list of messages
 
 def start_data():
     data = fetch_latest_processed_team_stats()
-    sorted_data = sort_by_avg_form_score(sort_teams_by_form_score(data))
+    teams_sorted_by_form_score = sort_teams_by_form_score(data)  # Sort teams by form score
+    sorted_data = sort_by_avg_form_score(teams_sorted_by_form_score)  # Sort by average form score
     return sorted_data if sorted_data else []
 
 
