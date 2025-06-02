@@ -30,7 +30,7 @@ A Streamlit web application for triggering and visualizing processed KBO game da
    Create a `.env` file in the root directory with the following content:
 
    ```env
-   DB_CONNECTION=local  # Set to "local" or "remote" to choose which DB configuration to use
+   DB_CONNECTION=remote  # Set to "local" or "remote" to choose which DB configuration to use
 
    KAFKA_BOOTSTRAP_SERVER=172.21.229.182
    KAFKA_TOPIC_IN=processed_team_stats  # Topic the app listens to for incoming processed data
