@@ -2,14 +2,17 @@ import os
 import json
 import mariadb
 from dotenv import load_dotenv
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 load_dotenv()
 
 DB_CONNECTION = os.getenv("DB_CONNECTION", "").strip()
 is_local = DB_CONNECTION == "local"
 
-print("is local:", is_local)
-print("DB_CONNECTION:", DB_CONNECTION)
+logging.info("is local: %s", is_local)
+logging.info("DB_CONNECTION: %s", DB_CONNECTION)
 
 db_config = {
     "user": os.getenv("DB_LOCAL_USER") if is_local else os.getenv("DB_REMOTE_USER"),
