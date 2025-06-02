@@ -14,12 +14,27 @@ load_dotenv()
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
+
 # Page configuration
 st.set_page_config(
     page_title="⚾ KBO Team Stats Dashboard",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+#custom CSS 
+st.markdown(
+    """
+    <style>
+    div[data-testid="stExpander"] details summary p {
+        font-size: 18px;
+        font-weight: bold;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 
 # Constants from environment
 BROKER = os.getenv("KAFKA_BOOTSTRAP_SERVER")
@@ -81,12 +96,18 @@ if st.sidebar.button("🔄 Update Stats via Scraper"):
                 ])
 
                 # Team Form: Precomputed form score
-                tab_form.metric("Avg Form Score", team['team_form_score'])
+                tab_form.metric("Average Form Score", team['team_form_score'])
 
                 # Batters Table
                 batters_df = pd.DataFrame(team['batters'])
                 if not batters_df.empty:
                     batters_df.set_index('player_name', inplace=True)
+                    batters_df.index.name = "Player Name"
+                    batters_df = batters_df.rename(columns={
+                    "batting_average": "Batting Average",
+                    "on_base_percentage": "On Base Percentage",
+                    "form_score": "Form Score"
+                    })
                     tab_batters.table(batters_df)
                 else:
                     tab_batters.info("No batter data available.")
@@ -95,6 +116,14 @@ if st.sidebar.button("🔄 Update Stats via Scraper"):
                 pitchers_df = pd.DataFrame(team['pitchers'])
                 if not pitchers_df.empty:
                     pitchers_df.set_index('player_name', inplace=True)
+                    pitchers_df.index.name = "Player Name"
+                    pitchers_df = pitchers_df.rename(columns={
+                    "era": "ERA",
+                    "whip": "WHIP",
+                    "k_per_9": "K Per 9",
+                    "bb_per_9": "BB per 9",
+                    "form_score": "Form Score"
+                    })
                     tab_pitchers.table(pitchers_df)
                 else:
                     tab_pitchers.info("No pitcher data available.")
@@ -114,6 +143,7 @@ else:
                 continue
 
             with st.expander(f"{team['team_name']} Dashboard", expanded=True):
+                
                 stats = team['team_stats']
                 col1, col2, col3, col4 = st.columns(4)
                 col1.metric("Wins", stats['wins'])
@@ -126,10 +156,16 @@ else:
                     "Batters", 
                     "Pitchers"
                 ])
-                tab_form.metric("Avg Form Score", team['team_form_score'])
+                tab_form.metric("Average Form Score", team['team_form_score'])
                 batters_df = pd.DataFrame(team['batters'])
                 if not batters_df.empty:
                     batters_df.set_index('player_name', inplace=True)
+                    batters_df.index.name = "Player Name"
+                    batters_df = batters_df.rename(columns={
+                    "batting_average": "Batting Average",
+                    "on_base_percentage": "On Base Percentage",
+                    "form_score": "Form Score"
+                    })
                     tab_batters.table(batters_df)
                 else:
                     tab_batters.info("No batter data available.")
@@ -137,6 +173,14 @@ else:
                 pitchers_df = pd.DataFrame(team['pitchers'])
                 if not pitchers_df.empty:
                     pitchers_df.set_index('player_name', inplace=True)
+                    pitchers_df.index.name = "Player Name"
+                    pitchers_df = pitchers_df.rename(columns={
+                    "era": "ERA",
+                    "whip": "WHIP",
+                    "k_per_9": "K Per 9",
+                    "bb_per_9": "BB per 9",
+                    "form_score": "Form Score"
+                    })
                     tab_pitchers.table(pitchers_df)
                 else:
                     tab_pitchers.info("No pitcher data available.")
