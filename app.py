@@ -43,11 +43,25 @@ team_colors = {
     "KIA Tigers":     "#FF0000",   # Red (Wikipedia: “Colors: Red, white, black”) :contentReference[oaicite:9]{index=9}
 }
 
+
 # Page configuration
 st.set_page_config(
     page_title="⚾ KBO Team Stats Dashboard",
     layout="wide",
     initial_sidebar_state="expanded"
+)
+
+#custom CSS 
+st.markdown(
+    """
+    <style>
+    div[data-testid="stExpander"] details summary p {
+        font-size: 18px;
+        font-weight: bold;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
 )
 
 # Constants from environment
@@ -108,10 +122,10 @@ if st.sidebar.button("🔄 Update Stats via Scraper"):
                     img_col.write("")
                 
                 
-                st.markdown(
-                    f"<h2 style='color:{color}; font-weight:bold'>{team['team_name']}</h2>",
-                    unsafe_allow_html=True
-                )
+                # st.markdown(
+                #     f"<h2 style='color:{color}; font-weight:bold'>{team['team_name']}</h2>",
+                #     unsafe_allow_html=True
+                # )
                 
                 
                 # Team Stats Metrics
@@ -199,10 +213,10 @@ else:
                     img_col.write("")
                 
                 
-                st.markdown(
-                    f"<h2 style='color:{color}; font-weight:bold'>{team['team_name']}</h2>",
-                    unsafe_allow_html=True
-                ) 
+                # st.markdown(
+                #     f"<h2 style='color:{color}; font-weight:bold'>{team['team_name']}</h2>",
+                #     unsafe_allow_html=True
+                # ) 
                 
                 
                 stats = team['team_stats']
