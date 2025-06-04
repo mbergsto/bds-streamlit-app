@@ -2,6 +2,7 @@ def mock_consume_latest_processed_data(*args, **kwargs):
     return [
         {
             "team_name": "Hanwha Eagles",
+            "team_form_score": 54,
             "team_stats": {
                 "wins": 10,
                 "losses": 5,
@@ -11,14 +12,12 @@ def mock_consume_latest_processed_data(*args, **kwargs):
             "batters": [
                 {
                     "player_name": "Hwang Young-mook",
-                    "position": "2B",
                     "on_base_percentage": 0.333,
                     "batting_average": 0.333,
                     "form_score": 7.2
                 },
                 {
                     "player_name": "Kim Min-woo",
-                    "position": "CF",
                     "on_base_percentage": 0.375,
                     "batting_average": 0.300,
                     "form_score": 6.9
@@ -37,6 +36,7 @@ def mock_consume_latest_processed_data(*args, **kwargs):
         },
         {
             "team_name": "LG Twins",
+            "team_form_score": 44,
             "team_stats": {
                 "wins": 8,
                 "losses": 6,
@@ -46,7 +46,6 @@ def mock_consume_latest_processed_data(*args, **kwargs):
             "batters": [
                 {
                     "player_name": "Lee Jae-won",
-                    "position": "RF",
                     "on_base_percentage": 0.400,
                     "batting_average": 0.350,
                     "form_score": 8.1

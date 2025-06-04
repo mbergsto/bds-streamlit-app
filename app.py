@@ -1,5 +1,4 @@
 import streamlit as st
-# from mock_consumer import mock_consume_latest_processed_data
 from consumer import consume_latest_processed_data, start_data
 from producer import send_trigger
 import pandas as pd
@@ -10,14 +9,43 @@ import logging
 # Load environment variables
 load_dotenv()
 
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
+
+# Team logos
+team_logos = {
+    "Hanwha Eagles":   "logos/hanwha.png",
+    "LG Twins":        "logos/lg.png",
+    "Samsung Lions":   "logos/samsung.png",
+    "Doosan Bears":    "logos/doosan.png",
+    "Lotte Giants":    "logos/lotte.png",
+    "NC Dinos":        "logos/nc.png",
+    "KT Wiz":          "logos/kt.png",
+    "Kiwoom Heroes":   "logos/kiwoom.png",
+    "SSG Landers":     "logos/ssg.png",
+    "KIA Tigers":      "logos/kia.png",
+}
+
 
 # Page configuration
 st.set_page_config(
     page_title="⚾ KBO Team Stats Dashboard",
     layout="wide",
     initial_sidebar_state="expanded"
+)
+
+#custom CSS 
+st.markdown(
+    """
+    <style>
+    div[data-testid="stExpander"] details summary p {
+        font-size: 18px;
+        font-weight: bold;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
 )
 
 # Constants from environment
@@ -64,7 +92,18 @@ if data:
         if team["team_name"] not in selected:
             continue
 
-        with st.expander(f"{team['team_name']} Dashboard", expanded=True):
+        # Highlight team names
+        with st.expander(f"{team['team_name']}", expanded=True) : 
+            
+            # team image
+            img_col, text_col = st.columns([1, 9], gap="small")
+            logo_path = team_logos.get(team["team_name"], None)
+            if logo_path and os.path.exists(logo_path):
+                img_col.image(logo_path, width=50)
+            else:
+                img_col.write("")
+            
+            
             stats = team['team_stats']
             col1, col2, col3, col4 = st.columns(4)
             col1.metric("Wins", stats['wins'])
@@ -72,12 +111,26 @@ if data:
             col3.metric("Draws", stats['draws'])
             col4.metric("Score Diff", stats['score_difference'])
 
-            tab_form, tab_batters, tab_pitchers = st.tabs(["Team Form", "Batters", "Pitchers"])
-            tab_form.metric("Avg Form Score", team['team_form_score'])
-
+            tab_form, tab_batters, tab_pitchers = st.tabs([
+                "Team Form", 
+                "Batters", 
+                "Pitchers"
+            ])
+            tab_form.metric("Average Form Score", team['team_form_score'])
             batters_df = pd.DataFrame(team['batters'])
             if not batters_df.empty:
                 batters_df.set_index('player_name', inplace=True)
+                
+                # Change the index name to a user-friendly one
+                batters_df.index.name = "Player Name"
+                
+                # Change column names to user-friendly ones
+                batters_df = batters_df.rename(columns={
+                "batting_average": "Batting Average",
+                "on_base_percentage": "On Base Percentage",
+                "form_score": "Form Score"
+                })
+                
                 tab_batters.table(batters_df)
             else:
                 tab_batters.info("No batter data available.")
@@ -85,6 +138,19 @@ if data:
             pitchers_df = pd.DataFrame(team['pitchers'])
             if not pitchers_df.empty:
                 pitchers_df.set_index('player_name', inplace=True)
+                
+                # Change the index name to a user-friendly one
+                pitchers_df.index.name = "Player Name"
+                
+                # Change column names to user-friendly ones
+                pitchers_df = pitchers_df.rename(columns={
+                "era": "ERA",
+                "whip": "WHIP",
+                "k_per_9": "K Per 9",
+                "bb_per_9": "BB per 9",
+                "form_score": "Form Score"
+                })
+                
                 tab_pitchers.table(pitchers_df)
             else:
                 tab_pitchers.info("No pitcher data available.")
