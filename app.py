@@ -131,6 +131,9 @@ if data:
                 "form_score": "Form Score"
                 })
                 
+                for col in batters_df.select_dtypes(include=['float']).columns:
+                    batters_df[col] = batters_df[col].apply(lambda x: f"{x:.2f}")
+
                 tab_batters.table(batters_df)
             else:
                 tab_batters.info("No batter data available.")
@@ -151,6 +154,9 @@ if data:
                 "form_score": "Form Score"
                 })
                 
+                for col in pitchers_df.select_dtypes(include=['float']).columns:
+                    pitchers_df[col] = pitchers_df[col].apply(lambda x: f"{x:.2f}")
+
                 tab_pitchers.table(pitchers_df)
             else:
                 tab_pitchers.info("No pitcher data available.")
